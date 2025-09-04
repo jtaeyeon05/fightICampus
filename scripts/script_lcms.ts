@@ -135,6 +135,10 @@
             movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/sub.mp4`
             contentTypeStr = "화면 + 캠 동영상 (13)"
             break
+        case "18":
+            movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`
+            contentTypeStr = "화면 동영상 (18)"
+            break
         case "29":
             movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`
             contentTypeStr = "캡쳐 영상 (29)"
