@@ -440,10 +440,12 @@
                     div.removeChild(downloadPopup)
                     showDownloadPopup = false
                 }
+                buttonDiv.removeChild(closeButton)
                 buttonDiv.removeChild(inspectButton)
                 buttonDiv.removeChild(downloadButton)
                 toggleButton.textContent = "<"
             } else {
+                buttonDiv.appendChild(closeButton)
                 buttonDiv.appendChild(inspectButton)
                 buttonDiv.appendChild(downloadButton)
                 toggleButton.textContent = ">"
@@ -451,6 +453,21 @@
             toggle = !toggle
         })
         buttonDiv.appendChild(toggleButton)
+
+        const closeButton = document.createElement("button")
+        makeButton(closeButton, "X", true)
+        closeButton.addEventListener("click", () => {
+            if (showInspectPopup) {
+                div.removeChild(inspectPopup)
+                showInspectPopup = false
+            }
+            if (showDownloadPopup) {
+                div.removeChild(downloadPopup)
+                showDownloadPopup = false
+            }
+            div.removeChild(buttonDiv)
+        })
+        if (toggle) buttonDiv.appendChild(closeButton)
 
         const inspectButton = document.createElement("button")
         makeButton(inspectButton, "분석", true)
