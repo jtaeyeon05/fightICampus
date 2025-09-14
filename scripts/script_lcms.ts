@@ -173,6 +173,18 @@
         fontStyle.textContent = font
         document.head.append(fontStyle)
 
+        const bootstrapCDN = document.createElement("link")
+        bootstrapCDN.href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        bootstrapCDN.rel = "stylesheet"
+        bootstrapCDN.integrity = "sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+        bootstrapCDN.crossOrigin = "anonymous"
+        document.head.append(bootstrapCDN)
+
+        const bootstrapIconsCDN = document.createElement("link")
+        bootstrapIconsCDN.href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        bootstrapIconsCDN.rel = "stylesheet"
+        document.head.append(bootstrapIconsCDN)
+
         function makeButton(button: HTMLButtonElement, text: string, for_menu: boolean = false): void {
             button.textContent = text
             button.style.padding = "10px 16px"
@@ -365,22 +377,15 @@
         downloadPopupButtonDiv.style.gap = "12px"
         downloadPopup.appendChild(downloadPopupButtonDiv)
 
-        const downloadSpinnerDiv = document.createElement("div")
-        const shadow = downloadSpinnerDiv.attachShadow({mode: "open"})
-
-        const bootstrapCDN = document.createElement("link")
-        bootstrapCDN.href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-        bootstrapCDN.rel = "stylesheet"
-        bootstrapCDN.integrity = "sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
-        bootstrapCDN.crossOrigin = "anonymous"
-        shadow.appendChild(bootstrapCDN)
-
         const downloadSpinner = document.createElement("div")
         downloadSpinner.className = "spinner-border"
         downloadSpinner.style.width = "1.5rem"
         downloadSpinner.style.height = "1.5rem"
         downloadSpinner.role = "status"
-        shadow.appendChild(downloadSpinner)
+
+        const checkIcon = document.createElement("i")
+        checkIcon.className = "bi bi-check"
+        checkIcon.style.fontSize = "1.5rem"
 
         let showDownloadPopupMessage = false
         const downloadPopupMessage = document.createElement("p")
@@ -399,7 +404,7 @@
             downloadPopupButton.style.cursor = "wait"
             downloadPopupButton.disabled = true
 
-            downloadPopupButtonDiv.appendChild(downloadSpinnerDiv)
+            downloadPopupButtonDiv.appendChild(downloadSpinner)
 
             let filename = contentTitle ? contentTitle : contentName
             if (downloadInput.value.trim() != "" && !/[\/:*?"<>\\]/.test(downloadInput.value)) filename = downloadInput.value.trim()
@@ -412,8 +417,16 @@
                     downloadPopupButton.style.backgroundColor = "#0945A0"
                     downloadPopupButton.style.cursor = "pointer"
                     downloadPopupButton.disabled = false
+                    downloadPopupButtonDiv.removeChild(downloadSpinner)
 
-                    downloadPopupButtonDiv.removeChild(downloadSpinnerDiv)
+                    downloadPopupButtonDiv.appendChild(checkIcon)
+                    setTimeout(() => {
+                        downloadPopupButtonDiv.removeChild(checkIcon)
+                        if (showDownloadPopup) {
+                            div.removeChild(downloadPopup)
+                            showDownloadPopup = false
+                        }
+                    }, 5000)
                 })
         })
         downloadPopupButtonDiv.appendChild(downloadPopupButton)
