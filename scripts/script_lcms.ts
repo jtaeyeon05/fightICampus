@@ -218,7 +218,7 @@
         const inspectPopup = document.createElement("div")
         inspectPopup.style.position = "relative"
         inspectPopup.style.marginLeft = "auto"
-        inspectPopup.style.width = "200px"
+        inspectPopup.style.width = "320px"
         inspectPopup.style.borderColor = "#000000"
         inspectPopup.style.borderWidth = "1px"
         inspectPopup.style.borderStyle = "solid"
@@ -227,7 +227,7 @@
         inspectPopup.style.marginTop = "10px"
         inspectPopup.style.backgroundColor = "#ffffff"
 
-        const inspectTitle = document.createElement("h3")
+        const inspectTitle = document.createElement("h5")
         inspectTitle.textContent = "영상 분석"
         inspectTitle.style.fontFamily = "NanumSquareNeoBold"
         inspectPopup.appendChild(inspectTitle)
@@ -251,7 +251,7 @@
         if (thumbnail) {
             const inspectImage = document.createElement("img")
             inspectImage.src = thumbnail
-            inspectImage.style.width = "120px"
+            inspectImage.style.width = "160px"
             inspectImage.style.display = "block"
             inspectImage.style.marginBottom = "12px"
             inspectImage.style.marginLeft = "auto"
@@ -314,7 +314,7 @@
         const downloadPopup = document.createElement("div")
         downloadPopup.style.position = "relative"
         downloadPopup.style.marginLeft = "auto"
-        downloadPopup.style.width = "200px"
+        downloadPopup.style.width = "320px"
         downloadPopup.style.borderColor = "#000000"
         downloadPopup.style.borderWidth = "1px"
         downloadPopup.style.borderStyle = "solid"
@@ -323,7 +323,7 @@
         downloadPopup.style.marginTop = "10px"
         downloadPopup.style.backgroundColor = "#ffffff"
 
-        const downloadTitle = document.createElement("h3")
+        const downloadTitle = document.createElement("h5")
         downloadTitle.textContent = "다운로드"
         downloadTitle.style.fontFamily = "NanumSquareNeoBold"
         downloadPopup.appendChild(downloadTitle)
@@ -360,7 +360,7 @@
         downloadInput.style.fontFamily = "NanumSquareNeo"
         downloadInput.style.fontSize = "14px"
         downloadInput.style.lineHeight = "1"
-        downloadInput.style.width = "160px"
+        downloadInput.style.width = "280px"
         downloadInput.style.marginBottom = "12px"
         downloadInput.addEventListener(
             'keydown',
