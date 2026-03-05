@@ -472,8 +472,24 @@
         div.appendChild(buttonDiv)
 
         let toggle = await getSetting("setting-open-tool")
+
+        const toggleButtonDiv = document.createElement("div")
+        toggleButtonDiv.style.display = "flex"
+        toggleButtonDiv.style.borderColor = "#000000"
+        toggleButtonDiv.style.borderWidth = "1px"
+        toggleButtonDiv.style.borderStyle = "solid"
+        toggleButtonDiv.style.borderRadius = "6px"
+        toggleButtonDiv.style.backgroundColor = "#0945A0"
+        toggleButtonDiv.style.opacity = "0.75"
+        buttonDiv.appendChild(toggleButtonDiv)
+
         const toggleButton = document.createElement("button")
-        makeButton(toggleButton, toggle ? ">" : "<", true)
+        makeButton(toggleButton, ">", false)
+        toggleButton.style.borderColor = "transparent"
+        toggleButton.style.backgroundColor = "transparent"
+        toggleButton.style.borderWidth = "0px"
+        toggleButton.style.borderRadius = "0px"
+        toggleButton.style.color = "#ffffff"
         toggleButton.addEventListener("click", () => {
             if (toggle) {
                 if (showInspectPopup) {
@@ -484,13 +500,11 @@
                     div.removeChild(downloadPopup)
                     showDownloadPopup = false
                 }
-                buttonDiv.removeChild(closeButton)
                 buttonDiv.removeChild(pipButton)
                 buttonDiv.removeChild(inspectButton)
                 buttonDiv.removeChild(downloadButton)
                 toggleButton.textContent = "<"
             } else {
-                buttonDiv.appendChild(closeButton)
                 buttonDiv.appendChild(pipButton)
                 buttonDiv.appendChild(inspectButton)
                 buttonDiv.appendChild(downloadButton)
@@ -498,10 +512,21 @@
             }
             toggle = !toggle
         })
-        buttonDiv.appendChild(toggleButton)
+        toggleButtonDiv.appendChild(toggleButton)
+
+        const toggleButtonDivider = document.createElement("div")
+        toggleButtonDivider.style.width = "1px"
+        toggleButtonDivider.style.alignSelf = "stretch"
+        toggleButtonDivider.style.backgroundColor = "#000000"
+        toggleButtonDiv.appendChild(toggleButtonDivider)
 
         const closeButton = document.createElement("button")
-        makeButton(closeButton, "X", true)
+        makeButton(closeButton, "X", false)
+        closeButton.style.borderColor = "transparent"
+        closeButton.style.backgroundColor = "transparent"
+        closeButton.style.borderWidth = "0px"
+        closeButton.style.borderRadius = "0px"
+        closeButton.style.color = "#ffffff"
         closeButton.addEventListener("click", () => {
             if (showInspectPopup) {
                 div.removeChild(inspectPopup)
@@ -513,7 +538,7 @@
             }
             div.removeChild(buttonDiv)
         })
-        if (toggle) buttonDiv.appendChild(closeButton)
+        toggleButtonDiv.appendChild(closeButton)
 
         const pipButton = document.createElement("button")
         makeButton(pipButton, "PiP", true)
