@@ -38,13 +38,21 @@
     test = await getSetting("setting-test-mode")
 
     function nativeVideo(url: string): void {
-        function logN(msg: any, err: boolean = false): void { log(msg, "downloadICampus", err) }
+        function logN(msg: any, err: boolean = false): void { log(msg, "nativeVideo", err) }
         logN("Started")
         const a = document.createElement("a")
         a.href = url
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
+        logN("Ended")
+    }
+
+    function requestPip(): void {
+        function logN(msg: any, err: boolean = false): void { log(msg, "requestPiP", err) }
+        logN("Started")
+        let videoElement = document.querySelector("video")
+        if (videoElement && !videoElement.src.endsWith("preloader.mp4") && !videoElement.src.endsWith("intro1.mp4")) videoElement.requestPictureInPicture()
         logN("Ended")
     }
 
@@ -211,20 +219,19 @@
 
         function makeButton(button: HTMLButtonElement, text: string, for_menu: boolean = false): void {
             button.textContent = text
-            button.style.padding = "10px 16px"
+            button.style.padding = "8px 12px"
             button.style.fontFamily = "NanumSquareNeo"
             button.style.fontSize = "12px"
             button.style.lineHeight = "1"
             button.style.borderColor = "#000000"
             button.style.borderWidth = "1px"
             button.style.borderStyle = "solid"
-            button.style.borderRadius = "9999px"
+            button.style.borderRadius = "6px"
             button.style.backgroundColor = "#0945A0"
             button.style.color = "#ffffff"
             button.style.cursor = "pointer"
             if (for_menu) {
-                button.style.fontSize = "16px"
-                button.style.opacity = "0.7"
+                button.style.opacity = "0.75"
             }
         }
 
@@ -461,7 +468,7 @@
         buttonDiv.style.marginLeft = "auto"
         buttonDiv.style.display = "flex"
         buttonDiv.style.justifyItems = "right"
-        buttonDiv.style.gap = "10px"
+        buttonDiv.style.gap = "8px"
         div.appendChild(buttonDiv)
 
         let toggle = await getSetting("setting-open-tool")
@@ -478,11 +485,13 @@
                     showDownloadPopup = false
                 }
                 buttonDiv.removeChild(closeButton)
+                buttonDiv.removeChild(pipButton)
                 buttonDiv.removeChild(inspectButton)
                 buttonDiv.removeChild(downloadButton)
                 toggleButton.textContent = "<"
             } else {
                 buttonDiv.appendChild(closeButton)
+                buttonDiv.appendChild(pipButton)
                 buttonDiv.appendChild(inspectButton)
                 buttonDiv.appendChild(downloadButton)
                 toggleButton.textContent = ">"
@@ -505,6 +514,11 @@
             div.removeChild(buttonDiv)
         })
         if (toggle) buttonDiv.appendChild(closeButton)
+
+        const pipButton = document.createElement("button")
+        makeButton(pipButton, "PiP", true)
+        pipButton.addEventListener("click", () => { requestPip() })
+        if (toggle) buttonDiv.appendChild(pipButton)
 
         const inspectButton = document.createElement("button")
         makeButton(inspectButton, "분석", true)
