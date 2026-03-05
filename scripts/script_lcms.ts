@@ -48,7 +48,19 @@
         logN("Ended")
     }
 
-    function downloadICampus(
+    async function getContentUrl(
+        { urlArray, targetContentType="video/mp4" }: { urlArray: string[], targetContentType?: string }
+    ): Promise<string> {
+        for (let url of urlArray) {
+            log(`Check ${url}`, "getContentUrl", false)
+            let response = await fetch(url, {method: "HEAD"})
+            let contentType = response.headers.get("content-type")
+            if (contentType == targetContentType) return url
+        }
+        throw Error("The content type of every url isn't the same as the target file type.")
+    }
+
+    async function downloadICampus(
         { url, filename="output.mp4" }: { url: string, filename?: string }
     ): Promise<boolean> {
         function logD(msg: any, err: boolean = false): void { log(msg, "downloadICampus", err) }
@@ -102,7 +114,8 @@
     let duration: string | null = document.querySelector("meta[name=\"duration\"]")?.getAttribute("content") ?? null
     let registrationDate: string | null = document.querySelector("meta[name=\"regdate\"]")?.getAttribute("content") ?? null
 
-    let movLink: string | null = null
+    let contentUrlArray: string[] = []
+    let contentUrl: string | null = null
     let durationStr: string | null = null
     let registrationDateStr: string | null = null
     let contentTypeStr: string = ""
@@ -122,31 +135,41 @@
     }
     switch (contentType) {
         case "2":
-            movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`
+            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`)
+            contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "일반 동영상 (2)"
             break
         case "10":
             /*
              * TODO: `https://lcms.skku.edu/index.php?module=xn_media_content2013&act=dispXn_media_content2013DownloadWebFile&site_id=skku100001&content_id=${contentId}&web_storage_id=31&file_subpath=contents%5Cweb_files%5Coriginal.pdf&file_name=FILENAME`
             */
-            movLink = null
+            // movLink.push()
+            // contentUrl = await getContentUrl({ urlArray: contentUrlArray, targetContentType: "TODO" }).catch(() => null)
             contentTypeStr = "PDF (10)"
             break
         case "13":
-            movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/sub.mp4`
+            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/sub.mp4`)
+            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/main.mp4`)
+            contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "화면 + 캠 동영상 (13)"
             break
         case "18":
-            movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`
+            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`)
+            contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "화면 동영상 (18)"
             break
         case "29":
-            movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`
+            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`)
+            contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "캡쳐 영상 (29)"
             break
         default:
             if (contentType) {
-                movLink = `https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`
+                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`)
+                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/screen.mp4`)
+                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/sub.mp4`)
+                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/main.mp4`)
+                contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
                 contentTypeStr = `확인되지 않은 타입 (${contentType})`
             }
     }
@@ -159,12 +182,13 @@
     log(`thumbnail: ${thumbnail}`)
     log(`duration: ${duration}`)
     log(`registrationDate: ${registrationDate}`)
-    log(`movLink: ${movLink}`)
+    log(`contentUrlArray: ${contentUrlArray}`)
+    log(`contentUrl: ${contentUrl}`)
     log(`contentTypeStr: ${contentTypeStr}`)
 
     // UI
 
-    const showUI: boolean = (movLink != null)
+    const showUI: boolean = (contentUrl != null)
     if (showUI) {
 
         let font = `@font-face { font-family: 'NanumSquareNeo'; src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot); src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf) format("truetype"); }' +
@@ -295,7 +319,7 @@
         const nativeVideoLocalButton = document.createElement("button")
         makeButton(nativeVideoLocalButton, "NV", false)
         nativeVideoLocalButton.addEventListener("click", () => {
-            nativeVideo(movLink!!)
+            nativeVideo(contentUrl!!)
         })
         nativeVideoButtonDiv.appendChild(nativeVideoLocalButton)
 
@@ -304,7 +328,7 @@
         nativeVideoNTButton.addEventListener("click", () => {
             chrome.runtime.sendMessage({
                 command: "nativeVideo",
-                url: movLink
+                url: contentUrl
             })
         })
         nativeVideoButtonDiv.appendChild(nativeVideoNTButton)
@@ -397,7 +421,7 @@
         const downloadPopupButton = document.createElement("button")
         makeButton(downloadPopupButton, "다운로드", false)
         downloadPopupButton.addEventListener("click", () => {
-            log(`movLink: ${movLink}`)
+            log(`contentUrl: ${contentUrl}`)
             if (showDownloadPopupMessage) downloadPopupButtonDiv.removeChild(downloadPopupMessage)
 
             downloadPopupButton.style.backgroundColor = "#5f6b7e"
@@ -408,7 +432,7 @@
 
             let filename = contentTitle ? contentTitle : contentName
             if (downloadInput.value.trim() != "" && !/[\/:*?"<>\\]/.test(downloadInput.value)) filename = downloadInput.value.trim()
-            downloadICampus({url: movLink!!, filename: `${filename}.mp4`})
+            downloadICampus({url: contentUrl!!, filename: `${filename}.mp4`})
                 .then((result: boolean) => {
                     if (!result) {
                         showDownloadPopupMessage = true
