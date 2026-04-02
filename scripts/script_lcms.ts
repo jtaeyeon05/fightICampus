@@ -122,6 +122,7 @@
     let duration: string | null = document.querySelector("meta[name=\"duration\"]")?.getAttribute("content") ?? null
     let registrationDate: string | null = document.querySelector("meta[name=\"regdate\"]")?.getAttribute("content") ?? null
 
+    let contentPath = thumbnail?.split(contentId)[0]
     let contentUrlArray: string[] = []
     let contentUrl: string | null = null
     let durationStr: string | null = null
@@ -143,7 +144,7 @@
     }
     switch (contentType) {
         case "2":
-            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`)
+            contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/mobile/ssmovie.mp4`)
             contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "일반 동영상 (2)"
             break
@@ -156,27 +157,27 @@
             contentTypeStr = "PDF (10)"
             break
         case "13":
-            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/sub.mp4`)
-            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/main.mp4`)
+            contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/sub.mp4`)
+            contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/main.mp4`)
             contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "화면 + 캠 동영상 (13)"
             break
         case "18":
-            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`)
+            contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/screen.mp4`)
             contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "화면 동영상 (18)"
             break
         case "29":
-            contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/screen.mp4`)
+            contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/screen.mp4`)
             contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
             contentTypeStr = "캡쳐 영상 (29)"
             break
         default:
             if (contentType) {
-                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/ssmovie.mp4`)
-                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/screen.mp4`)
-                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/sub.mp4`)
-                contentUrlArray.push(`https://vod.skku.edu/contents4/skku100001/${contentId}/contents/media_files/mobile/main.mp4`)
+                contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/mobile/ssmovie.mp4`)
+                contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/mobile/screen.mp4`)
+                contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/mobile/sub.mp4`)
+                contentUrlArray.push(`${contentPath}${contentId}/contents/media_files/mobile/main.mp4`)
                 contentUrl = await getContentUrl({ urlArray: contentUrlArray }).catch(() => null)
                 contentTypeStr = `확인되지 않은 타입 (${contentType})`
             }
@@ -190,6 +191,7 @@
     log(`thumbnail: ${thumbnail}`)
     log(`duration: ${duration}`)
     log(`registrationDate: ${registrationDate}`)
+    log(`contentPath: ${contentPath}`)
     log(`contentUrlArray: ${contentUrlArray}`)
     log(`contentUrl: ${contentUrl}`)
     log(`contentTypeStr: ${contentTypeStr}`)
